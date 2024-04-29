@@ -1,0 +1,12 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "gfbuild",
+            "command": ["gfortran calxnte.f90 read_nlte_ann.f90 incFTC.f90",
+            "read_r49_regdata.f90 main.f90 -g3 -O0",
+            "-fbacktrace -fcheck=all -ffpe-trap=zero,overflow,underflow -Wall -Wextra -Warray-temporaries -Wconversion -ffree-line-length-0"],
+        }
+    ]
+}
