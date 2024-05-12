@@ -1,5 +1,5 @@
 subroutine read_nlte_ann(IP_YMAX,IP_YMIN,IP_XMAX,IP_XMIN,B1,B2, IW, LW, OP_YMAX, OP_YMIN, &
-    OP_XMAX, OP_XMIN,ICHAN,FCHAN)
+    OP_XMAX, OP_XMIN,CLISTN,FCHANN)
 
 ! subroutine read_nlte_ann
 !
@@ -16,10 +16,9 @@ USE incFTC
 
 implicit none
 
-integer(8) :: ii, jj, ierr, ic,jc
-integer :: NCHNTE = 560
-integer,dimension(NCHNTE) :: ICHAN    
-real(4),dimension(NCHNTE) :: FCHAN 
+integer(8) :: ii, jj, ierr, ic,jc, XNCHNS
+integer,dimension(NCHNTE) :: CLISTN                     ! channel ID list for nonLTE
+real(4),dimension(NCHNTE) :: FCHANN                     ! frequencies of nonLTE channels.
 real(4),dimension(NCHNTE) :: IP_YMAX, IP_YMIN, B2 
 real(4),dimension(NCHNTE) :: OP_YMAX, OP_YMIN, OP_XMAX, OP_XMIN
 real(4),dimension(NCHNTE,4) :: IP_XMAX, IP_XMIN
@@ -27,7 +26,7 @@ real(4),dimension(NCHNTE,10) :: B1
 real(4),dimension(nCHNTE,10) :: LW
 real(4),dimension(NCHNTE,10,4) :: IW
 character(len=12) C_YMAX, C_YMIN, C_XMAX, C_XMIN, C_IW, C_b1, C_LW, C_b2
-character(len=12) C_YMAXO, C_YMINO, C_XMAXO, C_XMINO
+character(len=12) C_YMAXO, C_YMINO, C_XMAXO, C_XMINO, C_NCHNS
 !common /coef/ ICHAN,FCHAN,IP_YMAX,IP_YMIN
 
   OPEN(UNIT=IOUN,FILE=FNCOFN,FORM='FORMATTED',STATUS='OLD',IOSTAT=IERR)
@@ -37,6 +36,10 @@ character(len=12) C_YMAXO, C_YMINO, C_XMAXO, C_XMINO
     ENDIF
 !
  1020     FORMAT('Error ',I5,' opening file:',/,A80)
+! load nchans (not used for loading - see incFTC.f90: NCHNTE)
+  read(IOUN,*) C_NCHNS
+  read(IOUN,*) XNCHNS
+
 ! load header information
   read(IOUN,*) C_YMAX
   read(IOUN,*) ii,jj
@@ -75,7 +78,7 @@ character(len=12) C_YMAXO, C_YMINO, C_XMAXO, C_XMINO
   read(IOUN,*) ii,jj
 ! Load recurring channel data
   do ic=1,NCHNTE
-     read(IOUN,*) ICHAN(ic),FCHAN(ic)
+     read(IOUN,*) CLISTN(ic),FCHANN(ic)
      read(IOUN,*) IP_YMAX(ic)
      read(IOUN,*) IP_YMIN(ic)
      read(IOUN,*) IP_XMAX(ic,:)

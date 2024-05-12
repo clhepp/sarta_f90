@@ -1,1 +1,0 @@
-../../data/nlte_ann_model_v3.txt

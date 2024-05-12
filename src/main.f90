@@ -18,9 +18,6 @@ include 'rtpdefs.f90'
        REAL SACONV
        INTEGER rtpclose
        INTEGER rtpopen
-!
-! pending transfer to incFTC
-integer, parameter :: NCHNTE=560
 
 !---------------------
 !  used locally only
@@ -38,6 +35,7 @@ character(len=120) :: FIN, FOUT
 integer :: NWANTP                      ! no. wanted profiles
 integer, dimension(MAXPRO) :: LISTP    ! profile list numbers
 logical :: LRHOT                       ! force RHO for refl thermal?
+!LISTP = [1,2]
 
 !     Structures (see "rtpdefs.f")
 integer :: ISTAT
@@ -132,6 +130,17 @@ real(4), dimension(NOWAVG, MXOWLY) :: WAVGOP        ! optran raw predictor avera
 real(4), dimension(MAXLAY) :: FX                    ! fixed gas adjustment
 real(4), dimension(MXCHAN) :: LABOVE, FREQ          ! downwell thermal layer above
 
+! --------------------------------
+! For rd_xnte_ann
+! -------------------------------
+real(4), dimension(NCHNTE) :: IP_YMAX, IP_YMIN, OP_YMAX, OP_YMIN, OP_XMAX, OP_XMIN
+real(4), dimension(NCHNTE) :: FCHANN
+real(4), dimension(NCHNTE,4) :: B2, IP_XMAX, IP_XMIN
+real(4), dimension(NCHNTE,10) :: B1, LW
+real(4), dimension(NCHNTE,10,4):: IW
+integer, dimension(NCHNTE) :: INDNTE ! was ICHANN (CLISTN)
+!
+integer :: IPROF,IERR,ich                     ! Atmospheric Profile counter
 ! --------------------------------------------------
 !  For tunmlt
 ! --------------------------------------------------
@@ -295,17 +304,6 @@ real(4) :: TSURF
 ! SALT        ! input satellite altitude (kilometers)
 ! SVA         ! satellite viewing angle (degrees)
 real(4) :: SATANG, SATZEN, SALT, SVA
-! --------------------------------
-! For rd_xnte_ann
-! -------------------------------
-real(4),dimension(NCHNTE) :: IP_YMAX, IP_YMIN, OP_YMAX, OP_YMIN, OP_XMAX, OP_XMIN
-real(4),dimension(NCHNTE,4) :: B2, IP_XMAX, IP_XMIN
-real(4),dimension(NCHNTE,10) :: B1, LW
-real(4),dimension(NCHNTE,10,4):: IW
-real(4),dimension(MXCHAN) :: DRAD
-integer,dimension(NCHNTE) :: ICHAN
-!
-integer :: IPROF,IERR,ich                     ! Atmospheric Profile counter
 ! --------------------------
 ! for read_r49_regdata
 ! --------------------------
@@ -316,6 +314,7 @@ integer :: IPROF,IERR,ich                     ! Atmospheric Profile counter
 ! for calxnte_nn
 ! ----------------------------------------
 real(4), dimension(4) :: PREDNTE           ! sunang, view ang, temp(z1), temp(z2)
+real(4), dimension(MXCHAN) :: DRAD
 
 print*,'main: completed initialization'
 
@@ -369,7 +368,7 @@ read(*,*)
    if (COFNTE) then
       call read_nlte_ann(IP_YMAX, IP_YMIN, IP_XMAX, IP_XMIN,&
           B1, B2, IW, LW, OP_YMAX, OP_YMIN, OP_XMAX, &
-          OP_XMIN,ICHAN,FCHAN ) 
+          OP_XMIN,INDNTE,FCHANN )        ! ICHANNN -> INDNTE = CLISTN
    endif
 
 ! call tunmlt()
@@ -379,7 +378,7 @@ read(*,*)
           COEF1,  COEF2,  COEF3,  COEF4,  COEF5,  COEF6,  COEF7, &
            FREQ, LABOVE, COEFF,  INDCO2, COFCO2, INDSO2, COFSO2, &
          INDHNO, COFHNO, INDN2O, COFN2O, &
-         INDH2O,  WAZOP, WAVGOP, COFH2O, FX, NCHNTE, CLISTN, COEFN )
+         INDH2O,  WAZOP, WAVGOP, COFH2O, FX)  ! , NCHNTE, CLISTN, COEFN )
 !
 !  Calc OPTRAN absorption coefficient scaling factor WAOP
    WAOP(1)=WAZOP(1)
@@ -776,15 +775,15 @@ IF (ISTAT .EQ. -1)  GOTO 9999  ! reached End Of File
 !
       if (COFNTE) then
 ! assign PREDNTE values from current profile
-         PREDNTE(1) = cos(sunang)
+         PREDNTE(1) = cos(sunang*DEG2RAD)
          PREDNTE(2) = SVA
          PREDNTE(3) = (TEMP(1) + TEMP(2) + TEMP(3) + TEMP(4) + TEMP(5))/5.0 ! mean(tprof(1:5,:),1);
          PREDNTE(4) = (TEMP(6) + TEMP(7) + TEMP(8) + TEMP(9))/4.0           ! mean(tprof(6:9,:),1);
 ! -------------------------
 !  calculate nonLTE
 ! -------------------------
-         CALL calxnte(ICHAN,FCHAN,IP_YMAX,IP_YMIN,IP_XMAX,IP_XMIN,b1,b2, &
-           IW,LW,OP_YMAX,OP_YMIN,OP_XMAX,OP_XMIN, IPROF,PREDNTE, DRAD)
+         CALL calxnte(INDCHN,INDNTE,FCHANN, IP_YMAX,IP_YMIN,IP_XMAX,IP_XMIN, &
+           b1,b2,IW,LW,OP_YMAX,OP_YMIN,OP_XMAX,OP_XMIN, IPROF,PREDNTE, RAD)
       endif
 
 !call read_r49_regdata(PREDNTE, DELTAR)
@@ -797,7 +796,7 @@ IF (ISTAT .EQ. -1)  GOTO 9999  ! reached End Of File
 !  ----------------------
 !  End loop over profiles
 !  ----------------------
-        write(6,2060) IPROF
+!        write(6,2060) IPROF
  2060   FORMAT('sarta: end loop over profiles IPROF: ',I5)
         IPROF=IPROF + 1  ! increment profile counter
       GOTO 10

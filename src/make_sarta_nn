@@ -2,6 +2,12 @@
 # Makefile make_sarta for SARTA
 #
 
+# HDF and RTP lib, inc
+HDFLIB = -L/Users/chepplew/myLibs/hdf4/lib -ldf -ljpeg -lz \
+	-L/usr/local/lib/ -lsz 
+RTPLIB = -L/Users/chepplew/myLibs/rtp/lib -lrtp
+RTPINC = -I/Users/chepplew/myLibs/rtp/include
+
 .PHONY: main sarta
 
 # ------------------------------------------------------------------------
@@ -13,18 +19,35 @@ OBJS =  rdinfo.o rdpref.o opnrtp.o rdcoef.o tunmlt.o rdsun.o rdrtp.o  \
         sunpar.o faketz.o setems.o calrad.o calxnte_nn.o \
         wrtrtp.o util.o cbplev.o saconv.o vaconv.o qikexp.o main.o
 
+OPT = -convert big_endian -extend-source 132 -check all -g -cpp -traceback -fp-stack-check -warn interface
+
+F77 = gfortran
+FCFLAGS =  -fdec-structure -fconvert=swap  -fcheck=all -g
+
+# ------------------------------------------------------------------------
+# Build
+# ------------------------------------------------------------------------
+sarta:	$(OBJS)
+	$(F77) $(OBJS) $(RTPLIB) $(HDFLIB) $(FLIB)
+
+# Compile source to object files
+%.o : %.f90
+	$(F77) $(FCFLAGS) $(RTPINC) -c $*.f90
+
+
+
 # ------------------------------------------------------------------------
 # UMBC HDF LIBS
 # ------------------------------------------------------------------------
-HDFLIB = -L/home/chepplew/Lib/lib -ldf -ljpeg -lz \
-         -L/usr/local/lib/libsz.so.1 
+#HDFLIB = -L/home/chepplew/Lib/lib -ldf -ljpeg -lz \
+#         -L/usr/local/lib/libsz.so.1 
 # -lsz
 
 # ------------------------------------------------------------------------
 # RTP LIB and INCLUDE
 # ------------------------------------------------------------------------
-RTPLIB = -L/home/chepplew/GitLib/rtp/lib -lrtp
-RTPINC = -I/home/chepplew/GitLib/rtp/include
+#RTPLIB = -L/home/chepplew/GitLib/rtp/lib -lrtp
+#RTPINC = -I/home/chepplew/GitLib/rtp/include
 
 # ------------------------------------------------------------------------
 # Compilers
@@ -35,14 +58,14 @@ RTPINC = -I/home/chepplew/GitLib/rtp/include
 #F77 = ifort
 FLIB = 
 # to help debug:
-OPT = -convert big_endian -extend-source 132 -check all -g -cpp -traceback -fp-stack-check -warn interface
+#OPT = -convert big_endian -extend-source 132 -check all -g -cpp -traceback -fp-stack-check -warn interface
 # regular build for running
 # #OPT = -O2 -convert big_endian -extend-source 132 
 
 # gfortran
 # ------------------------------------------------------------------------
-F77 = gfortran
-FCFLAGS =  -fdec-structure -fconvert=swap  -fcheck=all -g
+#F77 = gfortran
+#FCFLAGS =  -fdec-structure -fconvert=swap  -fcheck=all -g
 #OPT = -O2 -fconvert=swap
 
 # ------------
@@ -66,12 +89,12 @@ FCFLAGS =  -fdec-structure -fconvert=swap  -fcheck=all -g
 # ------------------------------------------------------------------------
 # Build
 # ------------------------------------------------------------------------
-sarta:	$(OBJS)
-	$(F77) $(OBJS) $(RTPLIB) $(HDFLIB) $(FLIB)
+#sarta:	$(OBJS)
+#	$(F77) $(OBJS) $(RTPLIB) $(HDFLIB) $(FLIB)
 
 # Compile source to object files
-%.o : %.f90
-	$(F77) $(FCFLAGS) $(RTPINC) -c $*.f90
+#%.o : %.f90
+#	$(F77) $(FCFLAGS) $(RTPINC) -c $*.f90
 ##  $@ $< 
 
 ### $*.f90
