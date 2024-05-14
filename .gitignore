@@ -30,6 +30,10 @@
 *.exe
 *.out
 *.app
+bin/*
+
+# run-time input output data files
+data/*
 
 # specials
 donotuse/
