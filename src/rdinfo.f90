@@ -191,7 +191,7 @@
 !      ------------
        FIN='./data/sarta_in.rtp'                 ! input filename
        FOUT='./data/sarta_out.rtp'               ! output filename
-       NWANTP=-1   ! do sarta for all profiles found in input file
+       NWANTP=1   ! -1 do all profiles found in input file
        LRHOT=.FALSE. ! use input rho for reflected thermal
 !
 !      -----------------------------------------------------------------

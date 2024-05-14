@@ -25,7 +25,7 @@
 !       COEF1, COEF2, COEF3, COEF4, COEF5, COEF6, COEF7,
 !       FREQ, LABOVE, COEFF, INDCO2, COFCO2, INDSO2, COFSO2,
 !       INDHNO, COFHNO, INDN2O, COFN2O, INDH2O, WAZOP, WAVGOP,
-!       COFH2O, FX, NCHNTE, CLISTN, COEFN )
+!       COFH2O, FX, CLISTN, COEFN )
 
 
 !INPUT PARAMETERS:
@@ -57,7 +57,6 @@
 !    INTEGER   NCHN5   set5 number of channels     none
 !    INTEGER   NCHN6   set6 number of channels     none
 !    INTEGER   NCHN7   set7 number of channels     none
-!    INTEGER   NCHNTE  non-LTE number of channels  none
 !    INT arr   SETCHN  set# (1-7) chan belongs to  none (integer, 1 - 7)
 !    REAL arr  WAZOP   OPTRAN water grid           kiloMoles/cm^2
 !    REAL arr  WAVGOP  OPTRAN water pred averges   various
@@ -158,7 +157,7 @@
           COEF1,  COEF2,  COEF3,  COEF4,  COEF5,  COEF6,  COEF7, &
            FREQ, LABOVE, COEFF,  INDCO2, COFCO2, INDSO2, COFSO2, &
          INDHNO, COFHNO, INDN2O, COFN2O, &
-         INDH2O,  WAZOP, WAVGOP, COFH2O, FX, NCHNTE, CLISTN, COEFN )
+         INDH2O,  WAZOP, WAVGOP, COFH2O, FX)  ! , CLISTN, COEFN )
 !      =================================================================
 
 
@@ -182,7 +181,7 @@ use incFTC
 !-----------------------------------------------------------------------
 !      INPUT
 integer :: IPOPN, NCHAN, NCHN1, NCHN2, NCHN3, NCHN4, NCHN5, NCHN6, NCHN7
-integer :: NCHNTE
+! !integer :: NCHNTE
 integer, dimension(MXCHAN) :: INDCHN, SETCHN
        INTEGER CLIST1(MXCHN1)
        INTEGER CLIST2(MXCHN2)

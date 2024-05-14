@@ -30,7 +30,14 @@
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 bin/
+=======
+bin/*
+
+# run-time input output data files
+data/*
+>>>>>>> d7aa1ab0fc95481cbba659e9ecba6bf2f52c2a06
 
 # specials
 donotuse/

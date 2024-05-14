@@ -17,11 +17,19 @@
 # -----------------------------------------------
 # this for testing new build with jpl tuning
 airs_nn:
+	rm -f *.o incFTC.f90
+	ln -s incFTC_airs_2834.f90 incFTC.f90
 	make -f make_sarta_nn
 	mv a.out ../bin/airs_nn
 
-#	rm -f *.o incFTC.f
-#	ln -s incFTC_airs_l1c_p2022jul2022_xnte_v02.f incFTC.f
+
+# IASI
+iasi_nn:
+	rm -f *.o incFTC.f90
+	ln -sf incFTC_iasi_p2022jul22_dev.f90 incFTC.f90
+	make -f make_sarta_nn
+	mv a.out ../bin/iasi_nn
+
 #------------------------------------------------------------------------------------
 # File management
 #------------------------------------------------------------------------------------
